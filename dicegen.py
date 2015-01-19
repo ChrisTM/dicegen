@@ -1,59 +1,66 @@
-#! /usr/bin/python
+#! /bin/env python
+"""
+Command-line tool for generating strong and memorable passphrases in the style
+(but not the spirit) of Diceware.
 
-# Diceware is a system for generating strong passphrases with a wordlist and dice for randomness. DiceGen makes this process totally electronic and automatic.
-# While not in the true style of Diceware (less paranoid, and no dice), DiceGen still does a good job of generating strong and memorable passphrases.
-# Be sure to read http://world.std.com/~reinhold/diceware.html for some fascinating info about the Diceware system, and check out the FAQ for caveots concerning electronic generation of passphrases.
+Diceware is a non-electronic system for generating strong passphrases by using
+dice and a numbered wordlist. This tool removes the dice from Diceware, missing
+the point entirely, but adding a bunch of convienence.
+
+Read more about Diceware at http://world.std.com/~reinhold/diceware.html
+"""
 
 import optparse
-from os import path
+import os
 import random
 import re
 import sys
 
+
 def main():
     optParser = optparse.OptionParser(usage="%prog [-n] [-w]", version="%prog 1.2")
     optParser.add_option(
-            "-n", 
-            "--number", 
-            dest="number", 
-            type="int", 
-            default=1, 
-            help="number of passphrases to generate [default: %default]", 
-            metavar="NUM")
+        "-n",
+        "--number",
+        dest="number",
+        type="int",
+        default=1,
+        help="number of passphrases to generate [default: %default]",
+        metavar="NUM")
     optParser.add_option(
-            "-w", 
-            "--words", 
-            dest="words", 
-            type="int", 
-            default=5, 
-            help="number of words to use in passphrase [default: %default]", 
-            metavar="NUM")
+        "-w",
+        "--words",
+        dest="words",
+        type="int",
+        default=5,
+        help="number of words to use in passphrase [default: %default]",
+        metavar="NUM")
     optParser.add_option(
-            "--no-spaces",
-            dest="addSpaces",
-            action="store_false",
-            default=True,
-            help="do not add spaces between words")
-    BASEDIR = path.dirname(path.realpath(__file__))
+        "--no-spaces",
+        dest="addSpaces",
+        action="store_false",
+        default=True,
+        help="do not add spaces between words")
+    BASEDIR = os.path.dirname(os.path.realpath(__file__))
     optParser.add_option(
-            "--word-list-file", 
-            dest="wordList", 
-            default=path.join(BASEDIR, 'diceware.wordlist.asc'),
-            help="location of a complete Diceware wordlist [default: %default]", 
-            metavar="FILE")
+        "--word-list-file",
+        dest="wordList",
+        default=os.path.join(BASEDIR, 'diceware.wordlist.asc'),
+        help="location of a complete Diceware wordlist [default: %default]",
+        metavar="FILE")
     optParser.add_option(
-            "--word-list-format",
-            dest="wordListFormat",
-            default="diceware",
-            help="how the wordlist is formatted [possible values: diceware, simple] [default: %default]",
-            metavar="FORMAT")
+        "--word-list-format",
+        dest="wordListFormat",
+        default="diceware",
+        help="how the wordlist is formatted [possible values: diceware, simple] [default: %default]",
+        metavar="FORMAT")
     (options, args) = optParser.parse_args()
 
     # Open the word list
     try:
         wordListFile = open(options.wordList, 'r')
     except IOError:
-        sys.stderr.write('Error: Wordlist "%s" cannot be opened.\n' %(options.wordList))
+        sys.stderr.write('Error: Wordlist "%s" cannot be opened.\n' % (options.wordList))
         return 1
 
     # Build the appropriate regular expression
@@ -65,7 +72,7 @@ def main():
         try:
             raise ValueError
         except:
-            sys.stderr.write('Error: "%s" is not a supported word list format.\n' %(options.wordListFormat))
+            sys.stderr.write('Error: "%s" is not a supported word list format.\n' % (options.wordListFormat))
             return 1
 
     # Create list of valid words using the regular expression from above
@@ -89,9 +96,10 @@ def main():
     separator = ''
     if options.addSpaces:
         separator = ' '
-    for i in xrange(options.number):
+    for i in range(options.number):
         passphrase = ''
-        passphrase = separator.join([random.choice(wordList) for k in xrange(options.words)])
+        passphrase = separator.join([random.choice(wordList) for k in range(options.words)])
         print passphrase
 
-main()
+if __name__ == '__main__':
+    main()
