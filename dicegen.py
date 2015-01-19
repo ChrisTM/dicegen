@@ -13,9 +13,11 @@ Read more about Diceware at http://world.std.com/~reinhold/diceware.html
 
 import argparse
 import os
-import random
+from random import SystemRandom
 import re
 import sys
+
+random = SystemRandom()  # Use a higher-quality RNG
 
 
 def make_passphrase(words, num_words):
