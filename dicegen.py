@@ -11,7 +11,7 @@ the point entirely, but adding a bunch of convienence.
 Read more about Diceware at http://world.std.com/~reinhold/diceware.html
 """
 
-import optparse
+import argparse
 import os
 import random
 import re
@@ -47,58 +47,60 @@ def read_wordlist(filename, format='diceware'):
 
 
 def make_parser():
-    parser = optparse.OptionParser(usage="%prog [-n] [-w]", version="%prog 1.2")
+    parser = argparse.ArgumentParser(
+        description="Generate a Diceware-style passphrase.",
+    )
 
-    parser.add_option(
-        "-n",
-        "--number",
-        dest="number",
-        type="int",
+    parser.add_argument(
+        "-n", "--number",
+        dest="num_passphrases",
+        type=int,
         default=1,
-        help="number of passphrases to generate [default: %default]",
+        help="number of passphrases to generate [default: %(default)s]",
         metavar="NUM"
     )
 
-    parser.add_option(
-        "-w",
-        "--words",
-        dest="words",
-        type="int",
+    parser.add_argument(
+        "-w", "--words",
+        dest="num_words",
+        type=int,
         default=5,
-        help="number of words to use in passphrase [default: %default]",
-        metavar="NUM")
+        help="number of words to use in each passphrase [default: %(default)s]",
+        metavar="NUM"
+    )
 
     BASEDIR = os.path.dirname(os.path.realpath(__file__))
+    word_list = os.path.join(BASEDIR, 'diceware.wordlist.asc')
 
-    parser.add_option(
-        "--word-list-file",
-        dest="wordList",
-        default=os.path.join(BASEDIR, 'diceware.wordlist.asc'),
-        help="location of a complete Diceware wordlist [default: %default]",
-        metavar="FILE")
+    parser.add_argument(
+        "--word-list",
+        default=word_list,
+        help="location of a wordlist [default: %(default)s]",
+        metavar="FILE"
+    )
 
-    parser.add_option(
+    parser.add_argument(
         "--word-list-format",
-        dest="wordListFormat",
         default="diceware",
-        help="how the wordlist is formatted [possible values: diceware, simple] [default: %default]",
-        metavar="FORMAT")
+        help="format of wordlist [possible values: diceware, simple] [default: %(default)s]",
+        metavar="FORMAT"
+    )
 
     return parser
 
 
 def main():
     parser = make_parser()
-    options, args = parser.parse_args()
+    args = parser.parse_args()
 
-    words = read_wordlist(options.wordList, options.wordListFormat)
+    words = read_wordlist(args.word_list, args.word_list_format)
 
     if len(words) == 0:
         sys.stderr.write('Error: The word list does not contain any valid words. Please ensure that the word list is properly formatted and that the correct word list format is specified with the "--word-list-format" option.\n')
         sys.exit(1)
 
-    for i in range(options.number):
-        passphrase = make_passphrase(words, options.words)
+    for i in range(args.num_passphrases):
+        passphrase = make_passphrase(words, args.num_words)
         print passphrase
 
 
