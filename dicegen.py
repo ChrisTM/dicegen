@@ -1,4 +1,4 @@
-#! /bin/env python
+#! /usr/bin/env python3
 
 """
 Command-line tool for generating strong and memorable passphrases in the style
@@ -13,9 +13,9 @@ Read more about Diceware at http://world.std.com/~reinhold/diceware.html
 
 import argparse
 import os
-from random import SystemRandom
 import re
 import sys
+from random import SystemRandom
 
 random = SystemRandom()  # Use a higher-quality RNG
 
@@ -35,7 +35,8 @@ def read_wordlist(filename, format='diceware'):
     elif format == 'simple':
         expression = re.compile(r"^(?P<word>\S+)$")
     else:
-        raise ValueError('"{}"is not a supported word list format.'.format(format))
+        raise ValueError(
+            '"{}"is not a supported word list format.'.format(format))
 
     words = []
     for line in file_:
@@ -101,9 +102,9 @@ def main():
         sys.stderr.write('Error: The word list does not contain any valid words. Please ensure that the word list is properly formatted and that the correct word list format is specified with the "--word-list-format" option.\n')
         sys.exit(1)
 
-    for i in range(args.num_passphrases):
+    for _ in range(args.num_passphrases):
         passphrase = make_passphrase(words, args.num_words)
-        print passphrase
+        print(passphrase)
 
 
 if __name__ == '__main__':
