@@ -28,8 +28,6 @@ def read_wordlist(filename, format='diceware'):
     """
     Return a list of the words in the wordlist `filename`.
     """
-    file_ = open(filename, 'r')
-
     if format == 'diceware':
         expression = re.compile(r"^\d{5}\t(?P<word>\S+)$")
     elif format == 'simple':
@@ -39,13 +37,12 @@ def read_wordlist(filename, format='diceware'):
             '"{}"is not a supported word list format.'.format(format))
 
     words = []
-    for line in file_:
-        match = expression.match(line)
-        if match:
-            word = match.group('word')
-            words.append(word)
-
-    file_.close()
+    with open(filename, 'r') as file_:
+        for line in file_:
+            match = expression.match(line)
+            if match:
+                word = match.group('word')
+                words.append(word)
     return words
 
 
